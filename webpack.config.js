@@ -1,38 +1,54 @@
-var webpack = require('webpack');
-var path = require('path');
-
-var BUILD_DIR = path.resolve(__dirname, 'src/client/public');
-var APP_DIR = path.resolve(__dirname, 'src/client/app');
-var STATIC_DIR = path.resolve(__dirname, 'assets');
-const copy = new CopyWebpackPlugin([
-    { from: ROOT + '/assets/images', to: 'images' }
-]);
-
-var config = {
-    entry: APP_DIR + '/index.jsx',
-    output: {
-        path: BUILD_DIR,
-        filename: 'bundle.js'
-    },
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+module.exports = {
     module: {
-        rules: [{
-            test: /\.html$/,
-            use: [{
-                loader: 'html-loader',
-                options: {
-                    minimize: true
+        rules: [
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
                 }
-            }]
-        },
-        {
-            test: /\.jsx?/,
-            include: APP_DIR,
-            loader: 'babel-loader'
-        }]
+            },
+            {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: "html-loader"
+                    }
+                ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader?name=css/[name].[ext]'
+                ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader?name=bootstrap/[name].[ext]'
+                ]
+            },
+            {
+                test: /\.(png|svg|jpg|gif|jpeg)$/,
+                use: [
+                    'url-loader?name=images/[name].[ext]'
+                ]
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: [
+                    'file-loader'
+                ]
+            }
+        ]
     },
     plugins: [
-        copy()
+        new HtmlWebPackPlugin({
+            template: "./src/index.html",
+            filename: "./src/index.html"
+        })
     ]
 };
-
-module.exports = config;
